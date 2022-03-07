@@ -1,10 +1,10 @@
 #-------------------------------------------------------------------------------
 # Name:        portscanner.py
-# version:      1.1
+# version:     1.1
 #
-# Developer:      Jack western
+# Developer:   Jack western
 #
-# Created:    07/03/2022
+# Created:     07/03/2022
 # Licence:     Open Source
 #-------------------------------------------------------------------------------
 
