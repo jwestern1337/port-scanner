@@ -1,61 +1,51 @@
-import socket
+import socket, threading
 from rich import print
-import os
-from os import system
-from datetime import datetime
-from IPy import IP
-system('title Port scanner - loading...')
-def clear():
-    if os.name == 'nt':
-        system('cls')
-    else:
-        system('clear')
-def scan(ipaddress, port, timeout):
-    try:
-        sock = socket.socket()
-        sock.settimeout(float(timeout))
-        sock.connect((ipaddress, port))
-        print(f"[red][+] port {port} is open")
-    except:
-        pass
-    print("Finished scanning!")
 
-system('title Port scanner - menu')
-target = input("Target to scan: ")
+host = input("Enter an address to scan: ")
 try:
-    host_ip = socket.gethostbyname(target)
+    ip = socket.gethostbyname(host)
 except socket.gaierror:
-    print("[red]Failed to convert domain/hostname to IP, please try again or enter domain/hostname IP[/red")
-    input()
-try:
-    ports = int(input("Amount of ports to scan: "))
-except ValueError:
-    print("[red]Please enter a number next time[/red]")
-    input()
-try:
-    timeout = float(input("Time to spend on each port: "))
-except ValueError:
-    print("[red]Please enter a number next time[/red]")
-    input()
-before = datetime.now()
-print('-' * 80)
-if target != host_ip:
-    print(f'Scanning {target} ({host_ip}) on {ports} ports')
+    print("Failed to conver domain to IP, please do it manually")
+print('=' * 80)
+if host != ip:
+    print(f'Scanning {host} ({ip}) on 65535 ports')
 else:
-    print(f'Scanning {target} on {ports} ports')
-print('-' * 80)
-system('title Port scanner - scanning...')
-for port in range(1, ports):
-    scan(host_ip, port, timeout)
+    print(f'Scanning {host} on 65535 ports')
+threads = []
+open_ports = {}
 
-input()
-"""
-65535 ports in total though
+def try_port(ip, port, delay, open_ports):
 
-2160000 ports in 10 hours with a 0.001 timeout
-1080000 ports in 5 hours with a 0.001 timeout
-216000 ports in an hour  with a 0.001 timeout
-3600 ports in 1 minute with a 0.001 timeout
-600 ports in 10 seconds with a 0.001 timeout
-60 ports a second with a 0.001 timeout
-"""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.settimeout(delay)
+    result = sock.connect_ex((ip, port))
+
+    if result == 0:
+        open_ports[port] = 'open'
+        return True
+    else:
+        open_ports[port] = 'closed'
+        return None
+
+
+def scan_ports(ip, delay):
+    for port in range(0, 65535):
+        thread = threading.Thread(target=try_port, args=(ip, port, delay, open_ports))
+        threads.append(thread)
+
+    for i in range(0, 65535):
+        threads[i].start()
+
+    for i in range(0, 65535):
+        threads[i].join()
+
+    for i in range (0, 65535):
+        if open_ports[i] == 'open':
+            print('port number ' + str(i) + ' is open')
+        if i == 65535:
+            print('\nscan complete!')
+
+if __name__ == "__main__":
+    scan_ports(ip, 3)
+    print('=' * 80)
