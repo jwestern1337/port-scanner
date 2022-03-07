@@ -1,3 +1,13 @@
+#-------------------------------------------------------------------------------
+# Name:        portscanner.py
+# version:      1.1
+#
+# Developer:      Jack western
+#
+# Created:    07/03/2022
+# Licence:     Open Source
+#-------------------------------------------------------------------------------
+
 import socket, threading
 from rich import print
 
