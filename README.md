@@ -2,7 +2,6 @@
 
 A basic port scanner i made in python. 
 
-=========================================================
 UPDATE (3rd of march 2022):
   - added threading, so much faster now
   - reduced amount of code from 60 to 51 lines
