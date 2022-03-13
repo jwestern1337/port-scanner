@@ -38,8 +38,10 @@ def main():
     print('=' * 80)
     if host != ip:
         print(f'Scanning [bold]{host}[/bold] ([bold]{ip}[/bold]) on 65535 ports')
+        scan_ports(ip, delay=3)
     else:
         print(f'Scanning [bold]{host}[/bold] on 65535 ports')
+        scan_ports(ip, delay=3)
 
 
 def try_port(ip, port, delay, open_ports):
@@ -93,3 +95,4 @@ try:
         print("=" * 80)
 except IndexError:
     main()
+    print("=" * 80)
