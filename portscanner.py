@@ -8,21 +8,39 @@
 # Licence:     Open Source
 #-------------------------------------------------------------------------------
 
-import socket, threading
+import sys, socket, threading, requests
 from rich import print
 
-host = input("Enter an address to scan: ")
+print("""
+██████╗  ██████╗ ██████╗ ████████╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗ 
+██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗
+██████╔╝██║   ██║██████╔╝   ██║   ███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝
+██╔═══╝ ██║   ██║██╔══██╗   ██║   ╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗
+██║     ╚██████╔╝██║  ██║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║
+╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝
+""")
+
 try:
-    ip = socket.gethostbyname(host)
-except socket.gaierror:
-    print("Failed to conver domain to IP, please do it manually")
-print('=' * 80)
-if host != ip:
-    print(f'Scanning {host} ({ip}) on 65535 ports')
-else:
-    print(f'Scanning {host} on 65535 ports')
-threads = []
-open_ports = {}
+    a = requests.post('https://www.google.com')
+    if a.status_code != 405:
+        print("You are not connected to the internet") # quick interent check
+    else:
+        pass
+except Exception as e:
+    print(e)
+
+def main():
+    host = input("Enter an address to scan: ")
+    try:
+        ip = socket.gethostbyname(host)
+    except socket.gaierror:
+        print("Failed to conver domain to IP, please do it manually")
+    print('=' * 80)
+    if host != ip:
+        print(f'Scanning [bold]{host}[/bold] ([bold]{ip}[/bold]) on 65535 ports')
+    else:
+        print(f'Scanning [bold]{host}[/bold] on 65535 ports')
+
 
 def try_port(ip, port, delay, open_ports):
 
@@ -31,14 +49,15 @@ def try_port(ip, port, delay, open_ports):
     sock.settimeout(delay)
     result = sock.connect_ex((ip, port))
 
-    if result == 0:
+    if result == 0: 
         open_ports[port] = 'open'
         return True
     else:
         open_ports[port] = 'closed'
         return None
 
-
+threads = []
+open_ports = {}
 def scan_ports(ip, delay):
     for port in range(0, 65535):
         thread = threading.Thread(target=try_port, args=(ip, port, delay, open_ports))
@@ -56,6 +75,21 @@ def scan_ports(ip, delay):
         if i == 65535:
             print('\nscan complete!')
 
-if __name__ == "__main__":
-    scan_ports(ip, 3)
-    print('=' * 80)
+
+try:
+    if len(sys.argv[1]) < 1:
+        main()
+    else:
+        try:
+            ip = socket.gethostbyname(sys.argv[1])
+        except socket.gaierror:
+            print("Failed to conver domain to IP, please do it manually")
+        print('=' * 80)
+        if sys.argv[1] != ip:
+            print(f'Scanning [bold]{sys.argv[1]}[/bold] ([bold]{ip}[/bold]) on 65535 ports')
+        else:
+            print(f'Scanning [bold]{sys.argv[1]}[/bold] on 65535 ports')
+        scan_ports(ip=sys.argv[1], delay=3)
+        print("=" * 80)
+except IndexError:
+    main()
