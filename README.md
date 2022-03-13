@@ -10,7 +10,8 @@ UPDATE (13th of march 2022):
   - added a cli option, so you can now do `python portscanner.py {target}` (without the '{}')
   - added a banner
   - added an interent check
-
-ROADMAP:
   - released a compiled version
+
+
+Well, i've done everything i want to do with this script so i will no longer be updating it (unless it breaks for some reason)
  
