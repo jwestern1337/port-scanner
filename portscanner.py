@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:        portscanner.py
-# version:     1.1
+# version:     1.2
 #
 # Developer:   Jack western
 #
